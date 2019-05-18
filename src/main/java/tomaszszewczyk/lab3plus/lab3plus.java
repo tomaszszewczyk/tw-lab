@@ -1,6 +1,6 @@
-package tomaszszewczyk.lab3;
+package tomaszszewczyk.lab3plus;
 
-public class lab3 {
+public class lab3plus {
     public static void main(String[] args) throws InterruptedException {
 
         test(new Buffer());
@@ -165,7 +165,7 @@ class Buffer implements AbstractBuffer {
     }
 }
 
-class BufferWithSemaphore implements AbstractBuffer{
+class BufferWithSemaphore implements AbstractBuffer {
     private String[] buf;
     private int start = 0;
     private int stop = 0;
