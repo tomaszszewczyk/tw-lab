@@ -5,6 +5,14 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+interface AbstractBuffer {
+    void clear();
+
+    void put(String x) throws InterruptedException;
+
+    String get() throws InterruptedException;
+}
+
 public class lab4 {
     public static void main(String[] args) throws InterruptedException {
 
@@ -90,7 +98,7 @@ class Producer extends Thread {
                     System.out.println(e.getMessage());
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
@@ -111,16 +119,10 @@ class Consumer extends Thread {
             for (int i = 0; i < count; i++) {
                 System.out.println(myBuffer.get());
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
-}
-
-interface AbstractBuffer {
-    void clear();
-    void put(String x) throws InterruptedException;
-    String get() throws InterruptedException;
 }
 
 class BufferWithConditionals implements AbstractBuffer {
@@ -151,7 +153,7 @@ class BufferWithConditionals implements AbstractBuffer {
     public void put(String x) throws InterruptedException {
         lock.lock();
         try {
-            if(stop == 100)
+            if (stop == 100)
                 notFull.await();
             buf[stop] = x;
             stop += 1;
@@ -166,7 +168,7 @@ class BufferWithConditionals implements AbstractBuffer {
         lock.lock();
         String result;
         try {
-            if(start == stop)
+            if (start == stop)
                 notEmpty.await();
             result = buf[start];
             start += 1;
@@ -178,7 +180,7 @@ class BufferWithConditionals implements AbstractBuffer {
     }
 }
 
-class BufferWithSemaphore implements AbstractBuffer{
+class BufferWithSemaphore implements AbstractBuffer {
     private String[] buf;
     private int start = 0;
     private int stop = 0;
@@ -206,7 +208,7 @@ class BufferWithSemaphore implements AbstractBuffer{
     @Override
     public String get() throws InterruptedException {
         semaphore.acquire();
-        while(start == stop) {
+        while (start == stop) {
             semaphore.release();
             semaphore.acquire();
         }

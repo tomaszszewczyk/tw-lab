@@ -1,5 +1,13 @@
 package tomaszszewczyk.lab3;
 
+interface AbstractBuffer {
+    void clear();
+
+    void put(String x);
+
+    String get();
+}
+
 public class lab3 {
     public static void main(String[] args) throws InterruptedException {
 
@@ -75,10 +83,10 @@ class Producer extends Thread {
     }
 
     public void run() {
-        for(int i=0; i<count; i++) {
+        for (int i = 0; i < count; i++) {
             myBuffer.put(Integer.toString(i));
 
-            try{
+            try {
                 sleep(20, 0);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -98,23 +106,16 @@ class Consumer extends Thread {
     }
 
     public void run() {
-        for(int i=0; i<count; i++) {
+        for (int i = 0; i < count; i++) {
             System.out.println(myBuffer.get());
         }
     }
-}
-
-interface AbstractBuffer {
-    void clear();
-    void put(String x);
-    String get();
 }
 
 class Buffer implements AbstractBuffer {
     private String[] buf;
     private int start = 0;
     private int stop = 0;
-    private enum BufState {ACQUIRED, RELEASED}
     private BufState state;
 
     Buffer() {
@@ -129,7 +130,7 @@ class Buffer implements AbstractBuffer {
     }
 
     public synchronized void put(String x) {
-        while(state == BufState.ACQUIRED) {
+        while (state == BufState.ACQUIRED) {
             try {
                 wait();
             } catch (InterruptedException ie) {
@@ -146,7 +147,7 @@ class Buffer implements AbstractBuffer {
     }
 
     public synchronized String get() {
-        while(state == BufState.ACQUIRED || start == stop) {
+        while (state == BufState.ACQUIRED || start == stop) {
             try {
                 wait();
             } catch (InterruptedException ie) {
@@ -163,9 +164,11 @@ class Buffer implements AbstractBuffer {
 
         return result;
     }
+
+    private enum BufState {ACQUIRED, RELEASED}
 }
 
-class BufferWithSemaphore implements AbstractBuffer{
+class BufferWithSemaphore implements AbstractBuffer {
     private String[] buf;
     private int start = 0;
     private int stop = 0;
@@ -193,7 +196,7 @@ class BufferWithSemaphore implements AbstractBuffer{
     @Override
     public String get() {
         semaphore.acquire();
-        while(start == stop) {
+        while (start == stop) {
             semaphore.release();
             semaphore.acquire();
         }
@@ -206,10 +209,8 @@ class BufferWithSemaphore implements AbstractBuffer{
 
 class Semaphore {
 
-    private enum SemState {ACQUIRED, RELEASED}
     private SemState state;
     private int waiting;
-
     Semaphore() {
         this.state = SemState.RELEASED;
         this.waiting = 0;
@@ -217,7 +218,7 @@ class Semaphore {
 
     synchronized void acquire() {
         waiting++;
-        while(state == SemState.ACQUIRED) {
+        while (state == SemState.ACQUIRED) {
             try {
                 wait();
             } catch (InterruptedException ie) {
@@ -229,9 +230,11 @@ class Semaphore {
     }
 
     synchronized void release() {
-        if(waiting > 0) {
+        if (waiting > 0) {
             notify();
         }
         state = SemState.RELEASED;
     }
+
+    private enum SemState {ACQUIRED, RELEASED}
 }

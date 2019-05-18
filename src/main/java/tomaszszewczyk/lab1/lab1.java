@@ -5,17 +5,17 @@ public class lab1 {
         final long startTime = System.currentTimeMillis();
         final Counter myCounter = new Counter();
 
-        Thread firstThread = new Thread(){
+        Thread firstThread = new Thread() {
             public void run() {
-                for(int i=0; i<1000000; i++) {
+                for (int i = 0; i < 1000000; i++) {
                     myCounter.inc();
                 }
             }
         };
 
-        Thread secondThread = new Thread(){
+        Thread secondThread = new Thread() {
             public void run() {
-                for(int i=0; i<1000000 ; i++) {
+                for (int i = 0; i < 1000000; i++) {
                     myCounter.dec();
                 }
             }
@@ -33,15 +33,19 @@ public class lab1 {
 
 class Counter extends Thread {
     private int val;
+
     Counter() {
         this.val = 0;
     }
+
     void inc() {
         this.val++;
     }
+
     void dec() {
         this.val--;
     }
+
     int getVal() {
         return val;
     }

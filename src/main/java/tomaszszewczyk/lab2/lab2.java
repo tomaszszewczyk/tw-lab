@@ -5,17 +5,17 @@ public class lab2 {
         final long startTime = System.currentTimeMillis();
         final CounterWithSemaphore myCounter = new CounterWithSemaphore();
 
-        Thread firstThread = new Thread(){
+        Thread firstThread = new Thread() {
             public void run() {
-                for(int i=0; i<1000000; i++) {
+                for (int i = 0; i < 1000000; i++) {
                     myCounter.inc();
                 }
             }
         };
 
-        Thread secondThread = new Thread(){
+        Thread secondThread = new Thread() {
             public void run() {
-                for(int i=0; i<1000000 ; i++) {
+                for (int i = 0; i < 1000000; i++) {
                     myCounter.dec();
                 }
             }
@@ -39,16 +39,19 @@ class CounterWithSemaphore extends Thread {
         this.val = 0;
         this.sem = new Semaphore();
     }
+
     void inc() {
         sem.acquire();
         this.val++;
         sem.release();
     }
+
     void dec() {
         sem.acquire();
         this.val--;
         sem.release();
     }
+
     int getVal() {
         return val;
     }
@@ -56,10 +59,8 @@ class CounterWithSemaphore extends Thread {
 
 class Semaphore {
 
-    private enum SemState {ACQUIRED, RELEASED}
     private SemState state;
     private int waiting;
-
     Semaphore() {
         this.state = SemState.RELEASED;
         this.waiting = 0;
@@ -67,7 +68,7 @@ class Semaphore {
 
     synchronized void acquire() {
         waiting++;
-        while(state == SemState.ACQUIRED) {
+        while (state == SemState.ACQUIRED) {
             try {
                 wait();
             } catch (InterruptedException ie) {
@@ -79,9 +80,11 @@ class Semaphore {
     }
 
     synchronized void release() {
-        if(waiting > 0) {
+        if (waiting > 0) {
             this.notify();
         }
         state = SemState.RELEASED;
     }
+
+    private enum SemState {ACQUIRED, RELEASED}
 }

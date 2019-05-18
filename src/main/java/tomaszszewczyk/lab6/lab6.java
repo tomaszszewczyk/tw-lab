@@ -13,7 +13,7 @@ class lab6 {
             }
 
             public void run() {
-                for(int i = 0; i < 1000; i++)
+                for (int i = 0; i < 1000; i++)
                     list.add(i);
             }
         }
@@ -73,7 +73,7 @@ class List {
         boolean result;
         lock.lock();
         try {
-            if(o == data) {
+            if (o == data) {
                 result = true;
             } else if (next != null) {
                 result = next.contains(o);
@@ -91,7 +91,7 @@ class List {
         List result;
         lock.lock();
         try {
-            if(o == data) {
+            if (o == data) {
                 result = next;
             } else if (o == next.get()) {
                 next = next.getNext();
@@ -111,7 +111,7 @@ class List {
         lock.lock();
         try {
             List old_next = next;
-            next= new List(o, old_next);
+            next = new List(o, old_next);
         } finally {
             lock.unlock();
         }
