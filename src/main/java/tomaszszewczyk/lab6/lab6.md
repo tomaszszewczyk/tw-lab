@@ -1,3 +1,19 @@
+# Sprawozdanie nr 3 - Tomasz Szewczyk
+## Mechanizmy synchronizacji w Java
+
+### Problem
+
+ Podczas blokowania przy dostępie do struktur danych zachodz dodatkowy problem. Czy nie dałoby się uniknąć blokowania
+ dostępu do całej struktury? Czy istnieje sposób umożliwienia dostępu do jednej struktury z wielu wątków pod warunkiem,
+ że każdy wątek będzie korzystał z innej części struktury? Rozwiązaniem jest blokowanie drobnoziarniste. Stosując tą
+ technikę zamykamy zamek jedynie na tym elemencie struktury z którego aktualnie korzystamy.
+
+### Zadanie
+
+ Należało zaimplementować listę blokowaną drobnoziarniście oraz blokowaną globalnie a następnie zmierzyć ich wydajność
+ w zależności od kosztu wykonanie operacji.
+
+```java
 package tomaszszewczyk.lab6;
 
 import java.util.concurrent.locks.Lock;
@@ -250,3 +266,53 @@ class ListWithGlobalLock implements ListIf {
         }
     }
 }
+```
+
+Wyniki pomiarów:
+
+```
+$ ./lab6
+
+Koszt: 0
+Blokowanie drobnoziarniste: 13
+Blokowanie globalne: 1
+
+Koszt: 1
+Blokowanie drobnoziarniste: 15
+Blokowanie globalne: 80
+
+Koszt: 2
+Blokowanie drobnoziarniste: 18
+Blokowanie globalne: 156
+
+Koszt: 3
+Blokowanie drobnoziarniste: 23
+Blokowanie globalne: 230
+
+Koszt: 4
+Blokowanie drobnoziarniste: 30
+Blokowanie globalne: 306
+
+Koszt: 5
+Blokowanie drobnoziarniste: 38
+Blokowanie globalne: 380
+
+Koszt: 6
+Blokowanie drobnoziarniste: 45
+Blokowanie globalne: 456
+
+Koszt: 7
+Blokowanie drobnoziarniste: 53
+Blokowanie globalne: 531
+
+Koszt: 8
+Blokowanie drobnoziarniste: 60
+Blokowanie globalne: 606
+
+Koszt: 9
+Blokowanie drobnoziarniste: 68
+Blokowanie globalne: 680
+```
+
+Zgodnie z oczekekiwaniami blokowanie globalne jest bardziej korzystne tylko wtedy gdy koszt operacji jest bardzo mały.
+Im większy koszt wykonanie operacji na liście tym większa była różnica na niekorzyść blokowania globalnego.
