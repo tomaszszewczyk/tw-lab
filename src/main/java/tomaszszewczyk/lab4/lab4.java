@@ -1,6 +1,9 @@
 package tomaszszewczyk.lab4;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class lab4 {
     public static void main(String[] args) throws InterruptedException {
@@ -77,14 +80,18 @@ class Producer extends Thread {
     }
 
     public void run() {
-        for(int i=0; i<count; i++) {
-            myBuffer.put(Integer.toString(i));
+        try {
+            for (int i = 0; i < count; i++) {
+                myBuffer.put(Integer.toString(i));
 
-            try{
-                sleep(20, 0);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+                try {
+                    sleep(20, 0);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
+        } catch(Exception e) {
+            System.out.println(e.toString());
         }
     }
 }
@@ -100,16 +107,20 @@ class Consumer extends Thread {
     }
 
     public void run() {
-        for(int i=0; i<count; i++) {
-            System.out.println(myBuffer.get());
+        try {
+            for (int i = 0; i < count; i++) {
+                System.out.println(myBuffer.get());
+            }
+        } catch(Exception e) {
+            System.out.println(e.toString());
         }
     }
 }
 
 interface AbstractBuffer {
     void clear();
-    void put(String x);
-    String get();
+    void put(String x) throws InterruptedException;
+    String get() throws InterruptedException;
 }
 
 class BufferWithConditionals implements AbstractBuffer {
@@ -117,27 +128,34 @@ class BufferWithConditionals implements AbstractBuffer {
     private int start = 0;
     private int stop = 0;
     private Lock lock = new ReentrantLock();
-    private Condition aquired = lock.newCondition();
+    private Condition notEmpty = lock.newCondition();
+    private Condition notFull = lock.newCondition();
 
     BufferWithConditionals() {
         buf = new String[100];
-        state = BufState.RELEASED;
     }
 
     public void clear() {
-        buf = new String[100];
-        start = 0;
-        stop = 0;
+        lock.lock();
+        try {
+            buf = new String[100];
+            start = 0;
+            stop = 0;
+            notFull.signal();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
     public void put(String x) throws InterruptedException {
         lock.lock();
         try {
-            aquired.await();
+            if(stop == 100)
+                notFull.await();
             buf[stop] = x;
             stop += 1;
-            aquired.signal();
+            notEmpty.signal();
         } finally {
             lock.unlock();
         }
@@ -146,11 +164,12 @@ class BufferWithConditionals implements AbstractBuffer {
     @Override
     public String get() throws InterruptedException {
         lock.lock();
+        String result;
         try {
-            aquired.await();
-            String result = buf[start];
+            if(start == stop)
+                notEmpty.await();
+            result = buf[start];
             start += 1;
-            aquired.signal();
         } finally {
             lock.unlock();
         }
@@ -177,7 +196,7 @@ class BufferWithSemaphore implements AbstractBuffer{
     }
 
     @Override
-    public void put(String x) {
+    public void put(String x) throws InterruptedException {
         semaphore.acquire();
         buf[stop] = x;
         stop += 1;
@@ -185,7 +204,7 @@ class BufferWithSemaphore implements AbstractBuffer{
     }
 
     @Override
-    public String get() {
+    public String get() throws InterruptedException {
         semaphore.acquire();
         while(start == stop) {
             semaphore.release();

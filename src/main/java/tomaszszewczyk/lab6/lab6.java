@@ -1,5 +1,8 @@
 package tomaszszewczyk.lab6;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 class lab6 {
     public static void main(String[] args) throws InterruptedException {
     
