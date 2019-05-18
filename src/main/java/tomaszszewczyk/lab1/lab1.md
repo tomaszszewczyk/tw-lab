@@ -1,7 +1,6 @@
 # Sprawozdanie nr 1 - Tomasz Szewczyk
 ## Wyścig
 
-
 ### Problem
 
  Głównym tematem zajęć było wprowadzenie w temat współbierzności oraz opis implementacji problemu w maszynie wirtualnej
