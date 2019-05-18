@@ -1,21 +1,33 @@
-package tomaszszewczyk.lab7;
+package tomaszszewczyk.lab7a;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class lab7 {
-  public static void main(String[] args) {
+public class lab7a {
+  public static void main(String[] args) throws InterruptedException {
     Fork fork1 = new Fork();
     Fork fork2 = new Fork();
     Fork fork3 = new Fork();
     Fork fork4 = new Fork();
     Fork fork5 = new Fork();
 
-    Man man1 = new Man(fork1, fork2);
-    Man man2 = new Man(fork2, fork3);
-    Man man3 = new Man(fork3, fork4);
-    Man man4 = new Man(fork4, fork5);
-    Man man5 = new Man(fork5, fork1);
+    Man man1 = new Man(1, fork1, fork2);
+    Man man2 = new Man(2, fork2, fork3);
+    Man man3 = new Man(3, fork3, fork4);
+    Man man4 = new Man(4, fork4, fork5);
+    Man man5 = new Man(5, fork5, fork1);
+
+    man1.start();
+    man2.start();
+    man3.start();
+    man4.start();
+    man5.start();
+
+    man1.join();
+    man2.join();
+    man3.join();
+    man4.join();
+    man5.join();
   }
 }
 
@@ -35,8 +47,10 @@ class Man extends Thread {
   private int counter = 0;
   private Fork fork1;
   private Fork fork2;
+  private int id;
 
-  public Man(Fork f1, Fork f2) {
+  public Man(int new_id, Fork f1, Fork f2) {
+    id = new_id;
     fork1 = f1;
     fork2 = f2;
   }
@@ -47,9 +61,7 @@ class Man extends Thread {
       fork2.pick();
 
       counter++;
-      if (counter % 100 == 0) {
-        System.out.println("Filozof: " + Thread.currentThread() + "jadlem " + counter + " razy");
-      }
+      System.out.println("Filozof: " + id + " jadlem " + counter + " razy");
       
       fork1.release();
       fork2.release();
