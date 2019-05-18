@@ -17,6 +17,8 @@ public class lab7b {
         Man man4 = new Man(4, fork4, fork5);
         Man man5 = new Man(5, fork5, fork1);
 
+        final long start = System.currentTimeMillis();
+
         man1.start();
         man2.start();
         man3.start();
@@ -28,6 +30,9 @@ public class lab7b {
         man3.join();
         man4.join();
         man5.join();
+
+        final long end = System.currentTimeMillis();
+        System.out.println("Czas: " + (end - start));
     }
 }
 
@@ -48,7 +53,7 @@ class Man extends Thread {
     private Fork fork1;
     private Fork fork2;
     private int id;
-    private Lock lock = new ReentrantLock();
+    private static Lock lock = new ReentrantLock();
 
     public Man(int new_id, Fork f1, Fork f2) {
         id = new_id;
@@ -64,10 +69,12 @@ class Man extends Thread {
             lock.unlock();
 
             counter++;
-            System.out.println("Filozof: " + id + " jadlem " + counter + " razy");
 
             fork1.release();
             fork2.release();
+
+            if(counter > 1000000)
+                return;
         }
     }
 }

@@ -1,5 +1,5 @@
 # Sprawozdanie nr 3 - Tomasz Szewczyk
-## Mechanizmy synchronizacji w Java
+## Blokowanie drobnoziarniste
 
 ### Problem
 
@@ -11,7 +11,7 @@
 ### Zadanie
 
  Należało zaimplementować listę blokowaną drobnoziarniście oraz blokowaną globalnie a następnie zmierzyć ich wydajność
- w zależności od kosztu wykonanie operacji.
+ w zależności od kosztu wykonania operacji.
 
 ```java
 package tomaszszewczyk.lab6;
@@ -268,7 +268,7 @@ class ListWithGlobalLock implements ListIf {
 }
 ```
 
-Wyniki pomiarów:
+Uśrednione wyniki pomiarów:
 
 ```
 $ ./lab6

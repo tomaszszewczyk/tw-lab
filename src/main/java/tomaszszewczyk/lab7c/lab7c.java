@@ -14,6 +14,8 @@ public class lab7c {
         Man man4 = new Man(4, 3, 4, w);
         Man man5 = new Man(5, 4, 0, w);
 
+        final long start = System.currentTimeMillis();
+
         man1.start();
         man2.start();
         man3.start();
@@ -25,6 +27,9 @@ public class lab7c {
         man3.join();
         man4.join();
         man5.join();
+
+        final long end = System.currentTimeMillis();
+        System.out.println("Czas: " + (end - start));
     }
 }
 
@@ -79,9 +84,11 @@ class Man extends Thread {
             waiter.please(fork1, fork2);
 
             counter++;
-            System.out.println("Filozof: " + id + " jadlem " + counter + " razy");
 
             waiter.thanks(fork1, fork2);
+
+            if(counter == 1000000)
+                return;
         }
     }
 }
