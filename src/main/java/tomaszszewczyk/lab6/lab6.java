@@ -5,7 +5,45 @@ import java.util.concurrent.locks.ReentrantLock;
 
 class lab6 {
     public static void main(String[] args) throws InterruptedException {
-    
+        class Writer extends Thread {
+            private List list;
+
+            public Writer(List aList) {
+                list = aList;
+            }
+
+            public void run() {
+                for(int i = 0; i < 1000; i++)
+                    list.add(i);
+            }
+        }
+
+        class Searcher extends Thread {
+            private List list;
+
+            public Searcher(List aList) {
+                list = aList;
+            }
+
+            public void run() {
+                for (int i = 1000; i >= 0; i--)
+                    if (list.contains(i)) {
+                        System.out.println("Found " + i);
+                    } else {
+                        System.out.println("Not found " + i);
+                    }
+            }
+        }
+
+        List list = new List(-1);
+        Writer w = new Writer(list);
+        Searcher s = new Searcher(list);
+
+        w.start();
+        s.start();
+
+        w.join();
+        s.join();
     }
 }
 
